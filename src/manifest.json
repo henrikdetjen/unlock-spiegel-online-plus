@@ -12,7 +12,6 @@
         "*://*.spiegel.de/*"
       ],
       "js": [
-        "jquery.js",
         "unlock-spiegel-online-plus.js"
       ]
     }
