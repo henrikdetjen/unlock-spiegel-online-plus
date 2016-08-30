@@ -1,72 +1,94 @@
-function deobfuscateText() {
-    $('p.obfuscated').each(function (index, elem) {
-        replaceTextContent(elem);
-        $(elem).removeClass("obfuscated").addClass("deobfuscated");
-    });
-    $('div.obfuscated-content').each(function (index, elem) {
-        $(elem).removeClass("obfuscated-content").addClass("deobfuscated-content");
-    });
-}
+var unlock = {
 
-function replaceTextContent(elem) {
-    $(elem).contents()
-        .filter(function () {
-            return this.nodeType === 3;
+    init: function () {
+
+        if (!document.querySelectorAll(".obfuscated-content").length) return
+
+        this.deobfuscateText()
+
+        browser.runtime.sendMessage({
+            title: "unlock-spiegel-online-plus",
+            content: "Plus Artikel wurde freigeschaltet!"
+        });
+    },
+
+    deobfuscateText: function () {
+
+        var me = this
+
+        ;[].forEach.call(document.querySelectorAll('.obfuscated'), function (el) {
+            el.classList.remove('obfuscated')
+            el.classList.add('deobfuscated', 'text-link-int', 'spCelink')
+
+            me.replaceTextContent(el)
         })
-        .replaceWith(function () {
-            var obfuscatedText = this.data;
+
+        ;[].forEach.call(document.querySelectorAll('.obfuscated-content'), function (el) {
+
+            el.classList.remove('obfuscated-content')
+            el.classList.add('deobfuscated-content')
+
+            var parent = el.parentNode
+            parent.style.setProperty('filter', 'blur(0px)', 'important');
+            parent.style.setProperty('opacity', '1', 'important');
+
+            parent.parentNode.removeChild(parent.nextSibling)
+        })
+    },
+
+    replaceTextContent: function (elem) {
+
+        var me = this
+
+        ;[].forEach.call(elem.childNodes, function (node) {
+
+            var dechiffre = {
+                177: '&',
+                178: '!',
+                180: ';',
+                181: '=',
+                32: ' '
+            }
+
+            var abc = [
+                'text-link-int',
+                'text-link-ext',
+                'lp-text-link-int',
+                'lp-text-link-ext',
+                'spCelink'
+            ]
+
+            if (typeof(node) !== 'object' &&
+                node.nodeType !== 3 &&
+                node.nodeType !== 1) {
+                return
+            }
+
+            if (node.nodeType === 1 &&
+                node.classList !== undefined &&
+                new RegExp(abc.join("|")).test(node.classList.toString()))
+                return
+
+            var obfuscatedText = node.textContent;
             var deobfuscatedText = "";
+
             for (var i = 0; i < obfuscatedText.length; i++) {
-                var charValue = obfuscatedText.charCodeAt(i);
-                if (charValue == 177) {
-                    deobfuscatedText += '&';
+
+                var charValue = obfuscatedText.charCodeAt(i)
+
+                if (dechiffre[charValue] !== undefined) {
+                    deobfuscatedText += dechiffre[charValue]
+                    continue;
                 }
-                else if (charValue == 178) {
-                    deobfuscatedText += '!';
-                }
-                else if (charValue == 180) {
-                    deobfuscatedText += ';';
-                }
-                else if (charValue == 181) {
-                    deobfuscatedText += '=';
-                }
-                else if (charValue == 32) {
-                    deobfuscatedText += ' ';
-                }
-                else if (charValue > 33) {
-                    deobfuscatedText += String.fromCharCode(charValue - 1);
+
+                if (charValue > 33) {
+                    deobfuscatedText += String.fromCharCode(charValue - 1)
                 }
             }
-            return deobfuscatedText;
+
+            node.textContent = deobfuscatedText
         })
-        .end()
-        .filter(function () {
-            return this.nodeType === 1
-                && !$(this).hasClass("text-link-int")
-                && !$(this).hasClass("text-link-ext")
-                && !$(this).hasClass("lp-text-link-int")
-                && !$(this).hasClass("lp-text-link-ext")
-                && !$(this).hasClass("spCelink");
-        })
-        .each(function () {
-            replaceTextContent(this);
-        });
+    }
 }
 
-setTimeout(function () {
-	if ( $(".obfuscated-content").length < 1 ) return;
-    deobfuscateText();
-    $(".deobfuscated-content").first().parent().each(function () {
-        this.style.setProperty('-webkit-filter', 'blur(0px)', 'important');
-        this.style.setProperty('filter', 'blur(0px)', 'important');
-        this.style.setProperty('opacity', '1', 'important');
-    });
-    $(".deobfuscated-content").first().parent().next().remove();
-    chrome.runtime.sendMessage({title: "unlock-spiegel-online-plus", content: "Plus Artikel wurde freigeschaltet!"});
-    //window.alert("\"unlock-spiegel-online-plus\"-Plugin: Plus Artikel wurde freigeschaltet!")
-}, 1000);
-
-
-
-
-
+unlock.init()
