@@ -54,6 +54,7 @@ function replaceTextContent(elem) {
 }
 
 setTimeout(function () {
+	if ( $(".obfuscated-content").length < 1 ) return;
     deobfuscateText();
     $(".deobfuscated-content").first().parent().each(function () {
         this.style.setProperty('filter', 'blur(0px)', 'important');

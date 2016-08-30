@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "unlock-spiegel-online-plus",
-  "version": "1.0",
-  "description": "Schaltet den Spiegel Online Plus Content frei",
+  "version": "1.1",
+  "description": "Unlocks the plus content of spiegel-online.de, see https://github.com/henrikdetjen/unlock-spiegel-online-plus",
   "icons": {
     "48": "unlock.png"
   },
