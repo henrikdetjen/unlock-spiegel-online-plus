@@ -28,7 +28,8 @@ var unlock = {
             el.classList.remove('obfuscated-content')
             el.classList.add('deobfuscated-content')
 
-            var parent = el.parentNode
+            var parent = el.parentNode;
+            parent.style.setProperty('-webkit-filter', 'blur(0px)', 'important');
             parent.style.setProperty('filter', 'blur(0px)', 'important');
             parent.style.setProperty('opacity', '1', 'important');
 

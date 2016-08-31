@@ -1,5 +1,5 @@
 # unlock-spiegel-online-plus
-plugin to unlock content on spiegel-online.de
+Chrome / Firefox plugin to unlock "plus" content on spiegel-online.de
 - feel free to add further browser support
 
 # Install
